@@ -195,12 +195,24 @@ $applyButton.Add_Click({
             $empty_icon_url = "https://raw.githubusercontent.com/technoluc/recycle-bin-themes/main/themes/$selected_theme/$selected_theme-empty.ico"
             $full_icon_url = "https://raw.githubusercontent.com/technoluc/recycle-bin-themes/main/themes/$selected_theme/$selected_theme-full.ico"
 
+            # Define the path for the recycle bin themes folder
+            $recycle_bin_themes_path = "$env:userprofile\Pictures\RecycleBinThemes"
+            
+            
+            # Create the directory if it doesn't exist
+            if (-not (Test-Path $recycle_bin_themes_path)) {
+                New-Item -ItemType Directory -Path $recycle_bin_themes_path | Out-Null
+            }
+            
             # Download the icons to a temporary folder if they are not already present
-            $tempPath = [System.IO.Path]::GetTempPath()
-            $empty_icon_path = Join-Path -Path $tempPath -ChildPath "$selected_theme-empty.ico"
-            $full_icon_path = Join-Path -Path $tempPath -ChildPath "$selected_theme-full.ico"
+            # $tempPath = [System.IO.Path]::GetTempPath()
+            # $empty_icon_path = Join-Path -Path $tempPath -ChildPath "$selected_theme-empty.ico"
+            # $full_icon_path = Join-Path -Path $tempPath -ChildPath "$selected_theme-full.ico"
 
             # Check if the icons are already present before downloading
+            $empty_icon_path = Join-Path -Path $recycle_bin_themes_path -ChildPath "$selected_theme-empty.ico"
+            $full_icon_path = Join-Path -Path $recycle_bin_themes_path -ChildPath "$selected_theme-full.ico"
+
             if (!(Test-Path $empty_icon_path) -or !(Test-Path $full_icon_path)) {
                 try {
                     # Download the icons if they are not present
@@ -210,14 +222,14 @@ $applyButton.Add_Click({
                     if (!(Test-Path $full_icon_path)) {
                         Invoke-WebRequest -Uri $full_icon_url -OutFile $full_icon_path
                     }
-
+            
                     # Call the function to set icons
                     Set-RecycleBinIcon -emptyIconPath $empty_icon_path -fullIconPath $full_icon_path
                 }
                 catch {
                     Write-Host "Error downloading and setting the icon: $_"
                 }
-            }
+            }        
         }
     })
 
