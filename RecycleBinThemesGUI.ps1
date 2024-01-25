@@ -128,12 +128,12 @@ $img1.Height = 400 # Pas de hoogte van het img1 hier aan
 
 # MouseDown event handler for the main window (to reset preview and clear selection)
 $window.Add_MouseDown({
-    # Reset img1 source to the default when any part of the window is clicked
-    $img1.Source = [System.Windows.Media.Imaging.BitmapImage]::new([System.Uri]$img1Path)
-    # Clear selection in the ListBox
-    $listBox.SelectedIndex = -1
+        # Reset img1 source to the default when any part of the window is clicked
+        $img1.Source = [System.Windows.Media.Imaging.BitmapImage]::new([System.Uri]$img1Path)
+        # Clear selection in the ListBox
+        $listBox.SelectedIndex = -1
 
-})
+    })
 
 
 # UI - TextBlock configuration
@@ -158,23 +158,23 @@ foreach ($themeName in $sortedThemeNames) {
 
 # Add a SelectionChanged event handler for the ListBox (to show $selectedThemeName preview)
 $listBox.Add_SelectionChanged({
-    $selectedIndex = $listBox.SelectedIndex
-    if ($selectedIndex -ge 0) {
-        $selectedDisplayName = $listBox.SelectedItem
-        $selectedThemeName = $themeNames.GetEnumerator() | Where-Object { $_.Value -eq $selectedDisplayName } | Select-Object -ExpandProperty Key
+        $selectedIndex = $listBox.SelectedIndex
+        if ($selectedIndex -ge 0) {
+            $selectedDisplayName = $listBox.SelectedItem
+            $selectedThemeName = $themeNames.GetEnumerator() | Where-Object { $_.Value -eq $selectedDisplayName } | Select-Object -ExpandProperty Key
 
-        # Get the URL for the preview image
-        $previewImagePath = "https://raw.githubusercontent.com/technoluc/recycle-bin-themes/main/themes/$selectedThemeName/preview.gif"
+            # Get the URL for the preview image
+            $previewImagePath = "https://raw.githubusercontent.com/technoluc/recycle-bin-themes/main/themes/$selectedThemeName/preview.gif"
 
-        # Update the $img1 with the preview image
-        try {
-            $img1.Source = [System.Windows.Media.Imaging.BitmapImage]::new([System.Uri]$previewImagePath)
+            # Update the $img1 with the preview image
+            try {
+                $img1.Source = [System.Windows.Media.Imaging.BitmapImage]::new([System.Uri]$previewImagePath)
+            }
+            catch {
+                Write-Host "Error updating preview image: $_"
+            }
         }
-        catch {
-            Write-Host "Error updating preview image: $_"
-        }
-    }
-})
+    })
 
 
 # UI - Buttons configuration
@@ -186,30 +186,37 @@ $applyButton.Margin = "10"
 $applyButton.Add_Click({
         $choice = $listBox.SelectedIndex + 1
         if ($choice -gt 0) {
-            # Haal de geselecteerde thema-naam op basis van de weergavenaam
+            # Retrieve the selected theme name based on the display name
             $selectedDisplayName = $listBox.SelectedItem
             $selectedThemeName = $themeNames.GetEnumerator() | Where-Object { $_.Value -eq $selectedDisplayName } | Select-Object -ExpandProperty Key
 
-            # Haal de geselecteerde thema-URL's op
+            # Retrieve the selected theme URLs
             $selected_theme = $selectedThemeName
             $empty_icon_url = "https://raw.githubusercontent.com/technoluc/recycle-bin-themes/main/themes/$selected_theme/$selected_theme-empty.ico"
             $full_icon_url = "https://raw.githubusercontent.com/technoluc/recycle-bin-themes/main/themes/$selected_theme/$selected_theme-full.ico"
 
-            # Download de iconen naar een tijdelijke map
+            # Download the icons to a temporary folder if they are not already present
             $tempPath = [System.IO.Path]::GetTempPath()
             $empty_icon_path = Join-Path -Path $tempPath -ChildPath "$selected_theme-empty.ico"
             $full_icon_path = Join-Path -Path $tempPath -ChildPath "$selected_theme-full.ico"
 
-            try {
-                # Download de iconen
-                Invoke-WebRequest -Uri $empty_icon_url -OutFile $empty_icon_path
-                Invoke-WebRequest -Uri $full_icon_url -OutFile $full_icon_path
+            # Check if the icons are already present before downloading
+            if (!(Test-Path $empty_icon_path) -or !(Test-Path $full_icon_path)) {
+                try {
+                    # Download the icons if they are not present
+                    if (!(Test-Path $empty_icon_path)) {
+                        Invoke-WebRequest -Uri $empty_icon_url -OutFile $empty_icon_path
+                    }
+                    if (!(Test-Path $full_icon_path)) {
+                        Invoke-WebRequest -Uri $full_icon_url -OutFile $full_icon_path
+                    }
 
-                # Roep de functie aan om pictogrammen in te stellen
-                Set-RecycleBinIcon -emptyIconPath $empty_icon_path -fullIconPath $full_icon_path
-            }
-            catch {
-                Write-Host "Fout bij het downloaden en instellen van het pictogram: $_"
+                    # Call the function to set icons
+                    Set-RecycleBinIcon -emptyIconPath $empty_icon_path -fullIconPath $full_icon_path
+                }
+                catch {
+                    Write-Host "Error downloading and setting the icon: $_"
+                }
             }
         }
     })
@@ -264,34 +271,34 @@ $window.Content = $grid
 
 # Voeg een event handler toe voor het SizeChanged evenement van het venster
 $window.Add_SizeChanged({
-    # Bepaal de nieuwe hoogte en breedte van het venster
-    $newWidth = $window.ActualWidth
-    $newHeight = $window.ActualHeight
+        # Bepaal de nieuwe hoogte en breedte van het venster
+        $newWidth = $window.ActualWidth
+        $newHeight = $window.ActualHeight
 
-    # Bereken de nieuwe grootte van het img1 op basis van de nieuwe hoogte en breedte
-    $img1SizeFactor = [Math]::Min($newWidth / 800, $newHeight / 600)  # Hier kun je 800 en 600 aanpassen aan de oorspronkelijke grootte van het img1
-    $img1.Width = 300 * $img1SizeFactor
-    $img1.Height = 300 * $img1SizeFactor
+        # Bereken de nieuwe grootte van het img1 op basis van de nieuwe hoogte en breedte
+        $img1SizeFactor = [Math]::Min($newWidth / 800, $newHeight / 600)  # Hier kun je 800 en 600 aanpassen aan de oorspronkelijke grootte van het img1
+        $img1.Width = 300 * $img1SizeFactor
+        $img1.Height = 300 * $img1SizeFactor
 
-    # Bereken de nieuwe grootte van de knoppen op basis van de nieuwe hoogte en breedte
-    $buttonSizeFactor = [Math]::Min($newWidth / 800, $newHeight / 600)  # Hier kun je 800 en 600 aanpassen aan de oorspronkelijke grootte van het venster
-    $buttonWidth = 200 * $buttonSizeFactor
-    $buttonHeight = 100 * $buttonSizeFactor
+        # Bereken de nieuwe grootte van de knoppen op basis van de nieuwe hoogte en breedte
+        $buttonSizeFactor = [Math]::Min($newWidth / 800, $newHeight / 600)  # Hier kun je 800 en 600 aanpassen aan de oorspronkelijke grootte van het venster
+        $buttonWidth = 200 * $buttonSizeFactor
+        $buttonHeight = 100 * $buttonSizeFactor
 
-    # Pas de breedte en hoogte van de knoppen aan
-    $defaultButton.Width = $buttonWidth
-    $defaultButton.Height = $buttonHeight
-    $applyButton.Width = $buttonWidth
-    $applyButton.Height = $buttonHeight
+        # Pas de breedte en hoogte van de knoppen aan
+        $defaultButton.Width = $buttonWidth
+        $defaultButton.Height = $buttonHeight
+        $applyButton.Width = $buttonWidth
+        $applyButton.Height = $buttonHeight
 
-    # Voeg hier verdere aanpassingen van de grootte van elementen toe indien nodig
-    # Debug: show size
-    # Write-Host "Window Height: $newHeight"
-    # Write-Host "Window Width: $newWidth"
+        # Voeg hier verdere aanpassingen van de grootte van elementen toe indien nodig
+        # Debug: show size
+        # Write-Host "Window Height: $newHeight"
+        # Write-Host "Window Width: $newWidth"
 
-    # Zorg ervoor dat de elementen opnieuw worden weergegeven
-    $window.UpdateLayout()
-})
+        # Zorg ervoor dat de elementen opnieuw worden weergegeven
+        $window.UpdateLayout()
+    })
 
 # Toon het venster
 $window.ShowDialog() > $null
