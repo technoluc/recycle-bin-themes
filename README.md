@@ -154,7 +154,7 @@ your-theme-name/
 └── preview.gif  
 ```
 3. Add your theme name to the [`RecycleBinThemes.ps1`](./RecycleBinThemes.ps1) file to the `$supported_themes` array
-4. Create GIF of your theme in action. Make sure you set the your wallpaper to the color `#2d7d9a`. This is so that all the previews have a similar style.
+4. Create GIF of your theme in action. Make sure you set the your wallpaper to the a solid color. This is so that all the previews have a similar style.
 5. Send a pull request :)
 
 *Credits: https://reddit.com/r/pcmasterrace/comments/uvtdbx/cat_bin/i9nn1pq/*
