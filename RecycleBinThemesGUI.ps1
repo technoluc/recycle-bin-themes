@@ -213,6 +213,7 @@ $applyButton.Add_Click({
             $empty_icon_path = Join-Path -Path $recycle_bin_themes_path -ChildPath "$selected_theme-empty.ico"
             $full_icon_path = Join-Path -Path $recycle_bin_themes_path -ChildPath "$selected_theme-full.ico"
 
+            # Check if the icons already exist before downloading
             if (!(Test-Path $empty_icon_path) -or !(Test-Path $full_icon_path)) {
                 try {
                     # Download the icons if they are not present
@@ -223,13 +224,39 @@ $applyButton.Add_Click({
                         Invoke-WebRequest -Uri $full_icon_url -OutFile $full_icon_path
                     }
             
-                    # Call the function to set icons
-                    Set-RecycleBinIcon -emptyIconPath $empty_icon_path -fullIconPath $full_icon_path
                 }
                 catch {
-                    Write-Host "Error downloading and setting the icon: $_"
+                    Write-Host "Error downloading the icons: $_"
+                    return
                 }
-            }        
+            }
+
+            # Call the function to set icons
+            try {
+                Set-RecycleBinIcon -emptyIconPath $empty_icon_path -fullIconPath $full_icon_path
+            }
+            catch {
+                Write-Host "Error setting the icons: $_"
+            }
+
+            
+            # if (!(Test-Path $empty_icon_path) -or !(Test-Path $full_icon_path)) {
+            #     try {
+            #         # Download the icons if they are not present
+            #         if (!(Test-Path $empty_icon_path)) {
+            #             Invoke-WebRequest -Uri $empty_icon_url -OutFile $empty_icon_path
+            #         }
+            #         if (!(Test-Path $full_icon_path)) {
+            #             Invoke-WebRequest -Uri $full_icon_url -OutFile $full_icon_path
+            #         }
+            
+            #     }
+            #     # Call the function to set icons
+            #     Set-RecycleBinIcon -emptyIconPath $empty_icon_path -fullIconPath $full_icon_path
+            #     catch {
+            #         Write-Host "Error downloading and setting the icon: $_"
+            #     }
+            # }        
         }
     })
 
