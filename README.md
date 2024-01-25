@@ -1,5 +1,5 @@
 <h1 align="center">
-<img src="assets/default-bin-icon.png" width="10%" height="10%"><br>
+<img src="assets/bin.jpg" width="50%" height="50%"><br>
   Windows Recyclebin Themes 
 </h1>
 <p align="center">
