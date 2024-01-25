@@ -238,25 +238,6 @@ $applyButton.Add_Click({
             catch {
                 Write-Host "Error setting the icons: $_"
             }
-
-            
-            # if (!(Test-Path $empty_icon_path) -or !(Test-Path $full_icon_path)) {
-            #     try {
-            #         # Download the icons if they are not present
-            #         if (!(Test-Path $empty_icon_path)) {
-            #             Invoke-WebRequest -Uri $empty_icon_url -OutFile $empty_icon_path
-            #         }
-            #         if (!(Test-Path $full_icon_path)) {
-            #             Invoke-WebRequest -Uri $full_icon_url -OutFile $full_icon_path
-            #         }
-            
-            #     }
-            #     # Call the function to set icons
-            #     Set-RecycleBinIcon -emptyIconPath $empty_icon_path -fullIconPath $full_icon_path
-            #     catch {
-            #         Write-Host "Error downloading and setting the icon: $_"
-            #     }
-            # }        
         }
     })
 
